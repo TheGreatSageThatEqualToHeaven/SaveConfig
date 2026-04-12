@@ -1,0 +1,31 @@
+local HttpService = game:GetService("HttpService")
+
+local configFolder = "HeatScript"
+local configFile   = configFolder .. "/config.json"
+
+local function ensureFolder()
+    if not isfolder(configFolder) then makefolder(configFolder) end
+end
+
+local function saveConfig(cfg)
+    ensureFolder()
+    writefile(configFile, HttpService:JSONEncode(cfg))
+end
+
+local function loadConfig()
+    ensureFolder()
+    if isfile(configFile) then
+        local ok, data = pcall(function()
+            return HttpService:JSONDecode(readfile(configFile))
+        end)
+        if ok and data then return data end
+    end
+    return {}
+end
+
+-- Return the whole config system as a table
+return {
+    save   = saveConfig,
+    load   = loadConfig,
+    data   = loadConfig(), -- pre-loaded config data on require
+}
