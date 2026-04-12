@@ -1,0 +1,588 @@
+-- ============================================
+-- 🔥 UI Showcase — Main Script
+-- ============================================
+
+-- Load UI Library
+local UI = loadstring(game:HttpGet("https://pastebin.com/raw/ypMXuvuF"))()
+
+-- Load Config System
+local ConfigModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/TheGreatSageThatEqualToHeaven/SaveConfig/refs/heads/main/Cfg"))()
+local Config     = ConfigModule.data
+local saveConfig = ConfigModule.save
+local loadConfig = ConfigModule.load
+
+-- Window
+local Window = UI.new("UI Showcase", "v3.0")
+
+-- ============================================
+-- TABS
+-- icon ids from Lucide Icons Roblox port (accurate)
+-- home        = 7733960981  (house icon)
+-- flame       = 7733798747  (combat/fire)
+-- user        = 7743875962
+-- eye         = 7733774602  (visual)
+-- globe       = 7733954760  (world)
+-- wrench      = 7743878358  (misc)
+-- layout-grid = 7733970390  (showcase)
+-- ============================================
+local HomeTab     = Window:AddTab("Home",        "7733960981")  -- house ✅
+local CombatTab   = Window:AddTab("Combat",      "7733798747")  -- flame ✅
+local PlayerTab   = Window:AddTab("Player",      "7743875962")  -- user
+local VisualTab   = Window:AddTab("Visual",      "7733774602")  -- eye
+local WorldTab    = Window:AddTab("World",       "7733954760")  -- globe
+local MiscTab     = Window:AddTab("Misc",        "7743878358")  -- wrench
+local ShowcaseTab = Window:AddTab("UI Showcase", "7733970390")  -- layout-grid
+
+-- ============================================
+-- 🏠 HOME TAB
+-- ============================================
+local HomeSection = HomeTab:AddSection("Welcome")
+
+HomeSection:AddLabel("🔥 UI Showcase")
+HomeSection:AddLabel("Clean • Fast • Styled")
+HomeSection:AddSeparator()
+
+local p = HomeSection:AddParagraph({ Title = "Credits", Content = "" })
+p:SetColor(Color3.fromRGB(80, 255, 120))
+task.spawn(function()
+    local text = "Coded by Metamethod"
+    while true do
+        for i = 1, #text do p:Update(text:sub(1,i)) task.wait(0.05) end
+        task.wait(1)
+        for i = #text, 1, -1 do p:Update(text:sub(1,i)) task.wait(0.03) end
+        p:Update("") task.wait(0.5)
+    end
+end)
+
+HomeSection:AddSeparator()
+
+HomeSection:AddButton({ Title = "Initialize Script", Icon = "7733992604" }, function() -- log-in
+    Window:Notify({ Title = "System", Desc = "Script Initialized", Duration = 3, Kind = "success" })
+end)
+
+HomeSection:AddButton({ Title = "Save Config", Icon = "7734052335" }, function() -- save
+    saveConfig(Config)
+    Window:Notify({ Title = "Config", Desc = "Saved successfully!", Duration = 3, Kind = "success" })
+end)
+
+HomeSection:AddButton({ Title = "Reload Config", Icon = "7734051052" }, function() -- refresh-cw
+    local fresh = loadConfig()
+    for k, v in pairs(fresh) do Config[k] = v end
+    Window:Notify({ Title = "Config", Desc = "Reloaded from file!", Duration = 3, Kind = "success" })
+end)
+
+HomeSection:AddConfirmButton({ Title = "Reset Config", Icon = "7734050715" }, function() -- refresh-ccw
+    for k in pairs(Config) do Config[k] = nil end
+    saveConfig(Config)
+    Window:Notify({ Title = "Config", Desc = "Config reset! Rejoin to apply.", Duration = 3, Kind = "warn" })
+end)
+
+HomeSection:AddConfirmButton({ Title = "Destroy Script", Icon = "7743873772" }, function() -- trash-2
+    Window:Notify({ Title = "System", Desc = "Script Destroyed!", Duration = 3, Kind = "error" })
+end)
+
+-- ============================================
+-- ⚔️ COMBAT TAB
+-- ============================================
+local CombatSection = CombatTab:AddSection("Combat System")
+
+CombatSection:AddToggle({
+    Title = "Auto Farm", Icon = "7733799901", -- gamepad
+    Default = Config["AutoFarm"] or false, Keybind = true
+}, function(v)
+    Config["AutoFarm"] = v saveConfig(Config)
+    Window:Notify({ Title = "Auto Farm", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+CombatSection:AddToggle({
+    Title = "Silent Aim", Icon = "7734058599", -- skull
+    Default = Config["SilentAim"] or false
+}, function(v)
+    Config["SilentAim"] = v saveConfig(Config)
+    Window:Notify({ Title = "Silent Aim", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+CombatSection:AddCheckbox({
+    Title = "Auto Parry", Icon = "7734056608", -- shield
+    Default = Config["AutoParry"] or false
+}, function(v)
+    Config["AutoParry"] = v saveConfig(Config)
+    Window:Notify({ Title = "Auto Parry", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+CombatSection:AddCheckbox({
+    Title = "Rage Mode", Icon = "7733658504", -- alert-triangle
+    Default = Config["RageMode"] or false, Keybind = true
+}, function(v)
+    Config["RageMode"] = v saveConfig(Config)
+    Window:Notify({ Title = "Rage Mode", Desc = v and "ACTIVATED" or "Deactivated", Duration = 2, Kind = "info" })
+end)
+
+CombatSection:AddSlider({
+    Title = "Attack Speed", Icon = "7743874262", -- trending-up
+    Min = 0, Max = 200, Default = Config["AttackSpeed"] or 50
+}, function(v)
+    Config["AttackSpeed"] = v saveConfig(Config)
+    Window:Notify({ Title = "Speed", Desc = "Set to "..v, Duration = 2, Kind = "info" })
+end)
+
+CombatSection:AddDropdown({
+    Title = "Mode", Icon = "7743872758", -- target
+    List = {"Legit", "Aggressive", "Silent"},
+    Default = Config["CombatMode"] or "Legit"
+}, function(v)
+    Config["CombatMode"] = v saveConfig(Config)
+    Window:Notify({ Title = "Mode", Desc = v, Duration = 2, Kind = "info" })
+end)
+
+CombatSection:AddMultiDropdown({
+    Title = "Targets", Icon = "7743872758", -- target
+    List = {"Players", "NPCs", "Bosses"},
+    Default = Config["Targets"] or {"NPCs"}
+}, function(v)
+    Config["Targets"] = v saveConfig(Config)
+    Window:Notify({ Title = "Targets", Desc = table.concat(v, ", "), Duration = 2, Kind = "info" })
+end)
+
+CombatSection:AddTextBox({
+    Title = "Custom Target", Icon = "7734022107", -- pencil
+    Placeholder = "Enter username..."
+}, function(v)
+    Config["CustomTarget"] = v saveConfig(Config)
+    Window:Notify({ Title = "Target Set", Desc = v, Duration = 2, Kind = "info" })
+end)
+
+-- ============================================
+-- 🧍 PLAYER TAB
+-- ============================================
+local MovSection = PlayerTab:AddSection("Movement")
+
+MovSection:AddSlider({
+    Title = "WalkSpeed", Icon = "7743874482", -- truck
+    Min = 16, Max = 200, Default = Config["WalkSpeed"] or 16
+}, function(v)
+    Config["WalkSpeed"] = v saveConfig(Config)
+    Window:Notify({ Title = "WalkSpeed", Desc = v, Duration = 2, Kind = "info" })
+end)
+
+MovSection:AddSlider({
+    Title = "JumpPower", Icon = "7733671663", -- arrow-big-up
+    Min = 50, Max = 200, Default = Config["JumpPower"] or 50
+}, function(v)
+    Config["JumpPower"] = v saveConfig(Config)
+    Window:Notify({ Title = "JumpPower", Desc = v, Duration = 2, Kind = "info" })
+end)
+
+MovSection:AddToggle({
+    Title = "Infinite Jump", Icon = "7733671663", -- arrow-big-up
+    Default = Config["InfiniteJump"] or false, Keybind = true
+}, function(v)
+    Config["InfiniteJump"] = v saveConfig(Config)
+    Window:Notify({ Title = "Infinite Jump", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+MovSection:AddToggle({
+    Title = "God Mode", Icon = "7733956134", -- heart
+    Default = Config["GodMode"] or false
+}, function(v)
+    Config["GodMode"] = v saveConfig(Config)
+    Window:Notify({ Title = "God Mode", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+MovSection:AddCheckbox({
+    Title = "No Clip", Icon = "7743875263", -- unlock
+    Default = Config["NoClip"] or false
+}, function(v)
+    Config["NoClip"] = v saveConfig(Config)
+    Window:Notify({ Title = "No Clip", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+MovSection:AddCheckbox({
+    Title = "Anti AFK", Icon = "7734056608", -- shield
+    Default = Config["AntiAFK"] or false, Keybind = true
+}, function(v)
+    Config["AntiAFK"] = v saveConfig(Config)
+    Window:Notify({ Title = "Anti AFK", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+local TpSection = PlayerTab:AddSection("Teleport")
+
+TpSection:AddTextBox({
+    Title = "Teleport To Player", Icon = "7733992469", -- locate
+    Placeholder = "Enter player name..."
+}, function(v)
+    Window:Notify({ Title = "Teleport", Desc = "Teleporting to "..v, Duration = 2, Kind = "info" })
+end)
+
+TpSection:AddKeybind({
+    Title = "Toggle UI", Icon = "7733965118", -- key
+    Default = Enum.KeyCode.F
+}, function(key)
+    Window:Notify({ Title = "Keybind", Desc = key.Name, Duration = 2, Kind = "info" })
+end)
+
+TpSection:AddConfirmButton({ Title = "Reset Character", Icon = "7734051957" }, function() -- rotate-cw
+    Window:Notify({ Title = "Player", Desc = "Character Reset", Duration = 2, Kind = "success" })
+end)
+
+-- ============================================
+-- 👁️ VISUAL TAB
+-- ============================================
+local ESPSection = VisualTab:AddSection("ESP")
+
+ESPSection:AddToggle({
+    Title = "ESP Enabled", Icon = "7733774602", -- eye
+    Default = Config["ESPEnabled"] or false, Keybind = true,
+    ColorPicker = true,
+    ColorPickerDefault = Config["ESPColor"] and
+        Color3.fromRGB(Config["ESPColor"][1], Config["ESPColor"][2], Config["ESPColor"][3])
+        or Color3.fromRGB(0, 255, 100),
+    ColorPickerCallback = function(c)
+        Config["ESPColor"] = { math.floor(c.R*255), math.floor(c.G*255), math.floor(c.B*255) }
+        saveConfig(Config)
+    end
+}, function(v)
+    Config["ESPEnabled"] = v saveConfig(Config)
+    Window:Notify({ Title = "ESP", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = v and "success" or "info" })
+end)
+
+ESPSection:AddCheckbox({
+    Title = "ESP Boxes", Icon = "7733696665", -- box-select
+    Default = Config["ESPBoxes"] or false,
+    ColorPicker = true,
+    ColorPickerDefault = Config["ESPBoxColor"] and
+        Color3.fromRGB(Config["ESPBoxColor"][1], Config["ESPBoxColor"][2], Config["ESPBoxColor"][3])
+        or Color3.fromRGB(255, 80, 80),
+    ColorPickerCallback = function(c)
+        Config["ESPBoxColor"] = { math.floor(c.R*255), math.floor(c.G*255), math.floor(c.B*255) }
+        saveConfig(Config)
+    end
+}, function(v)
+    Config["ESPBoxes"] = v saveConfig(Config)
+    Window:Notify({ Title = "ESP Boxes", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+ESPSection:AddCheckbox({
+    Title = "ESP Tracers", Icon = "7733978098", -- link
+    Default = Config["ESPTracers"] or false, Keybind = true,
+    ColorPicker = true,
+    ColorPickerDefault = Config["ESPTracerColor"] and
+        Color3.fromRGB(Config["ESPTracerColor"][1], Config["ESPTracerColor"][2], Config["ESPTracerColor"][3])
+        or Color3.fromRGB(130, 160, 255),
+    ColorPickerCallback = function(c)
+        Config["ESPTracerColor"] = { math.floor(c.R*255), math.floor(c.G*255), math.floor(c.B*255) }
+        saveConfig(Config)
+    end
+}, function(v)
+    Config["ESPTracers"] = v saveConfig(Config)
+    Window:Notify({ Title = "ESP Tracers", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+ESPSection:AddCheckbox({
+    Title = "ESP Names", Icon = "7743875962", -- user
+    Default = Config["ESPNames"] or false
+}, function(v)
+    Config["ESPNames"] = v saveConfig(Config)
+    Window:Notify({ Title = "ESP Names", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+ESPSection:AddCheckbox({
+    Title = "ESP Health", Icon = "7733956134", -- heart
+    Default = Config["ESPHealth"] or false
+}, function(v)
+    Config["ESPHealth"] = v saveConfig(Config)
+    Window:Notify({ Title = "ESP Health", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+ESPSection:AddSlider({
+    Title = "ESP Distance", Icon = "7733992469", -- locate
+    Min = 50, Max = 2000, Default = Config["ESPDistance"] or 500
+}, function(v)
+    Config["ESPDistance"] = v saveConfig(Config)
+end)
+
+local ChamsSection = VisualTab:AddSection("Chams")
+
+ChamsSection:AddToggle({
+    Title = "Chams Enabled", Icon = "7734021595", -- palette
+    Default = Config["ChamsEnabled"] or false,
+    ColorPicker = true,
+    ColorPickerDefault = Config["ChamsColor"] and
+        Color3.fromRGB(Config["ChamsColor"][1], Config["ChamsColor"][2], Config["ChamsColor"][3])
+        or Color3.fromRGB(255, 200, 0),
+    ColorPickerCallback = function(c)
+        Config["ChamsColor"] = { math.floor(c.R*255), math.floor(c.G*255), math.floor(c.B*255) }
+        saveConfig(Config)
+    end
+}, function(v)
+    Config["ChamsEnabled"] = v saveConfig(Config)
+    Window:Notify({ Title = "Chams", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+ChamsSection:AddDropdown({
+    Title = "Chams Style", Icon = "7734021595", -- palette
+    List = {"Flat", "Shiny", "Neon", "Glass"},
+    Default = Config["ChamsStyle"] or "Flat"
+}, function(v)
+    Config["ChamsStyle"] = v saveConfig(Config)
+    Window:Notify({ Title = "Chams Style", Desc = v, Duration = 2, Kind = "info" })
+end)
+
+-- ============================================
+-- 🌍 WORLD TAB
+-- ============================================
+local WorldSection = WorldTab:AddSection("World Mods")
+
+WorldSection:AddToggle({
+    Title = "Fullbright", Icon = "7733975185", -- lightbulb
+    Default = Config["Fullbright"] or false
+}, function(v)
+    Config["Fullbright"] = v saveConfig(Config)
+    game:GetService("Lighting").Brightness = v and 10 or 1
+    Window:Notify({ Title = "Fullbright", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+WorldSection:AddToggle({
+    Title = "No Fog", Icon = "7733920317", -- cloud-fog
+    Default = Config["NoFog"] or false
+}, function(v)
+    Config["NoFog"] = v saveConfig(Config)
+    game:GetService("Lighting").FogEnd = v and 1e9 or 1000
+    Window:Notify({ Title = "No Fog", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+WorldSection:AddCheckbox({
+    Title = "No Shadows", Icon = "7733774495", -- eye-off
+    Default = Config["NoShadows"] or false
+}, function(v)
+    Config["NoShadows"] = v saveConfig(Config)
+    game:GetService("Lighting").GlobalShadows = not v
+    Window:Notify({ Title = "Shadows", Desc = v and "Disabled" or "Enabled", Duration = 2, Kind = "info" })
+end)
+
+WorldSection:AddSlider({
+    Title = "Time of Day", Icon = "7734068495", -- sun
+    Min = 0, Max = 24, Default = Config["TimeOfDay"] or 14
+}, function(v)
+    Config["TimeOfDay"] = v saveConfig(Config)
+    game:GetService("Lighting").ClockTime = v
+end)
+
+WorldSection:AddSlider({
+    Title = "Gravity", Icon = "7733671663", -- arrow-big-up
+    Min = 0, Max = 300, Default = Config["Gravity"] or 196
+}, function(v)
+    Config["Gravity"] = v saveConfig(Config)
+    workspace.Gravity = v
+end)
+
+WorldSection:AddSlider({
+    Title = "Ambient Brightness", Icon = "7733975185", -- lightbulb
+    Min = 0, Max = 10, Default = Config["AmbientBrightness"] or 1, Precise = true
+}, function(v)
+    Config["AmbientBrightness"] = v saveConfig(Config)
+    game:GetService("Lighting").Brightness = v
+end)
+
+local WeatherSection = WorldTab:AddSection("Weather")
+
+WeatherSection:AddDropdown({
+    Title = "Weather Preset", Icon = "7733746980", -- cloud
+    List = {"Clear", "Rainy", "Foggy", "Night", "Stormy", "Sunrise", "Sunset"},
+    Default = "Clear"
+}, function(v)
+    local l = game:GetService("Lighting")
+    if v == "Clear"   then l.ClockTime=14 l.Brightness=2   l.FogEnd=1e9
+    elseif v=="Rainy" then l.ClockTime=12 l.Brightness=0.5 l.FogEnd=500
+    elseif v=="Foggy" then l.ClockTime=12 l.Brightness=0.8 l.FogEnd=150
+    elseif v=="Night" then l.ClockTime=0  l.Brightness=0.1 l.FogEnd=1e9
+    elseif v=="Stormy"then l.ClockTime=10 l.Brightness=0.3 l.FogEnd=300
+    elseif v=="Sunrise"then l.ClockTime=6 l.Brightness=1.2 l.FogEnd=800
+    elseif v=="Sunset" then l.ClockTime=19 l.Brightness=1.5 l.FogEnd=700
+    end
+    Window:Notify({ Title = "Weather", Desc = v.." applied", Duration = 2, Kind = "info" })
+end)
+
+-- ============================================
+-- 🔧 MISC TAB
+-- ============================================
+local MiscSection = MiscTab:AddSection("Utilities")
+
+MiscSection:AddToggle({
+    Title = "Auto Rejoin", Icon = "7734051052", -- refresh-cw
+    Default = Config["AutoRejoin"] or false
+}, function(v)
+    Config["AutoRejoin"] = v saveConfig(Config)
+    Window:Notify({ Title = "Auto Rejoin", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+MiscSection:AddToggle({
+    Title = "Rejoin on Death", Icon = "7743873772", -- trash-2
+    Default = Config["RejoinOnDeath"] or false
+}, function(v)
+    Config["RejoinOnDeath"] = v saveConfig(Config)
+    Window:Notify({ Title = "Rejoin on Death", Desc = v and "Enabled" or "Disabled", Duration = 2, Kind = "info" })
+end)
+
+MiscSection:AddCheckbox({
+    Title = "Hide from Players", Icon = "7733774495", -- eye-off
+    Default = Config["HideFromPlayers"] or false
+}, function(v)
+    Config["HideFromPlayers"] = v saveConfig(Config)
+    Window:Notify({ Title = "Hide", Desc = v and "Hidden" or "Visible", Duration = 2, Kind = "info" })
+end)
+
+MiscSection:AddCheckbox({
+    Title = "Disable Animations", Icon = "7734057059", -- shuffle
+    Default = Config["DisableAnims"] or false
+}, function(v)
+    Config["DisableAnims"] = v saveConfig(Config)
+    Window:Notify({ Title = "Animations", Desc = v and "Disabled" or "Enabled", Duration = 2, Kind = "info" })
+end)
+
+MiscSection:AddSlider({
+    Title = "FOV", Icon = "7733774602", -- eye
+    Min = 70, Max = 120, Default = Config["FOV"] or 70
+}, function(v)
+    Config["FOV"] = v saveConfig(Config)
+    workspace.CurrentCamera.FieldOfView = v
+end)
+
+MiscSection:AddDropdown({
+    Title = "Game Speed", Icon = "7743874262", -- trending-up
+    List = {"0.5x", "1x", "1.5x", "2x", "3x"},
+    Default = "1x"
+}, function(v)
+    local speeds = { ["0.5x"]=0.5, ["1x"]=1, ["1.5x"]=1.5, ["2x"]=2, ["3x"]=3 }
+    game:GetService("RunService"):SetThrottleFramerateEnabled(false)
+    workspace:SetAttribute("GameSpeed", speeds[v] or 1)
+    Window:Notify({ Title = "Game Speed", Desc = v, Duration = 2, Kind = "info" })
+end)
+
+local NotifSection = MiscTab:AddSection("Notifications & Keybinds")
+
+NotifSection:AddButton({ Title = "Test Notification", Icon = "7733911828" }, function() -- bell
+    Window:Notify({ Title = "Test", Desc = "This is a test notification!", Duration = 3, Kind = "info" })
+end)
+
+NotifSection:AddButton({ Title = "Show Keybind List", Icon = "7733965118" }, function() -- key
+    Window:ShowKeybindList({ X = 20, Y = 20 })
+end)
+
+-- ============================================
+-- 🎮 UI SHOWCASE TAB
+-- ============================================
+local S1 = ShowcaseTab:AddSection("Toggles")
+
+S1:AddToggle({ Title = "Regular Toggle",           Icon = "7733992604" }, function(v) end)
+S1:AddToggle({ Title = "Toggle + Keybind",         Icon = "7733965118", Keybind = true }, function(v) end)
+S1:AddToggle({ Title = "Toggle + Color",           Icon = "7734021595",
+    ColorPicker = true, ColorPickerDefault = Color3.fromRGB(130, 160, 255),
+    ColorPickerCallback = function(c) end
+}, function(v) end)
+S1:AddToggle({ Title = "Toggle + Color + Keybind", Icon = "7734021595", Keybind = true,
+    ColorPicker = true, ColorPickerDefault = Color3.fromRGB(255, 80, 80),
+    ColorPickerCallback = function(c) end
+}, function(v) end)
+
+local S2 = ShowcaseTab:AddSection("Checkboxes")
+
+S2:AddCheckbox({ Title = "Regular Checkbox",           Icon = "7733715400" }, function(v) end) -- check
+S2:AddCheckbox({ Title = "Checkbox + Keybind",         Icon = "7733965118", Keybind = true }, function(v) end)
+S2:AddCheckbox({ Title = "Checkbox + Color",           Icon = "7734021595",
+    ColorPicker = true, ColorPickerDefault = Color3.fromRGB(80, 255, 120),
+    ColorPickerCallback = function(c) end
+}, function(v) end)
+S2:AddCheckbox({ Title = "Checkbox + Color + Keybind", Icon = "7734021595", Keybind = true,
+    ColorPicker = true, ColorPickerDefault = Color3.fromRGB(255, 200, 0),
+    ColorPickerCallback = function(c) end
+}, function(v) end)
+
+local S3 = ShowcaseTab:AddSection("Sliders")
+
+S3:AddSlider({ Title = "Regular Slider", Icon = "7734058803", -- sliders
+    Min = 0, Max = 100, Default = 50 }, function(v) end)
+S3:AddSlider({ Title = "Precise Slider", Icon = "7734058803",
+    Min = 0, Max = 1, Default = 0.5, Precise = true }, function(v) end)
+S3:AddSlider({ Title = "High Range Slider", Icon = "7743874262", -- trending-up
+    Min = 0, Max = 9999, Default = 500 }, function(v) end)
+
+local S4 = ShowcaseTab:AddSection("Inputs")
+
+S4:AddTextBox({ Title = "Text Input",          Icon = "7734022107", Placeholder = "Type something..."    }, function(v) end) -- pencil
+S4:AddTextBox({ Title = "Username Input",      Icon = "7743875962", Placeholder = "Enter username..."    }, function(v) end) -- user
+S4:AddTextBox({ Title = "Number Input",        Icon = "7734058803", Placeholder = "Enter a number..."   }, function(v) end) -- sliders
+S4:AddKeybind({ Title = "Keybind (G)",         Icon = "7733965118", Default = Enum.KeyCode.G              }, function(k) end) -- key
+S4:AddKeybind({ Title = "Keybind (None)",      Icon = "7733965118"                                        }, function(k) end)
+
+local S5 = ShowcaseTab:AddSection("Dropdowns")
+
+S5:AddDropdown({ Title = "Single Select", Icon = "7733970543", -- layout
+    List = {"Option A", "Option B", "Option C", "Option D"}, Default = "Option A"
+}, function(v) end)
+S5:AddMultiDropdown({ Title = "Multi Select", Icon = "7733970543",
+    List = {"Option A", "Option B", "Option C", "Option D", "Option E"}, Default = {"Option A", "Option B"}
+}, function(v) end)
+S5:AddDropdown({ Title = "Theme Picker", Icon = "7734021595", -- palette
+    List = {"Dark","Light","Midnight","Amoled","Nord","Sunset","Ocean","Forest","Rose","Slate"},
+    Default = "Dark"
+}, function(v) end)
+
+local S6 = ShowcaseTab:AddSection("Buttons")
+
+S6:AddButton({ Title = "Regular Button",  Icon = "7733992604" }, function() -- log-in
+    Window:Notify({ Title = "Button", Desc = "Clicked!", Duration = 2, Kind = "info" })
+end)
+S6:AddButton({ Title = "Save Button",    Icon = "7734052335" }, function() -- save
+    Window:Notify({ Title = "Saved", Desc = "Config saved!", Duration = 2, Kind = "success" })
+end)
+S6:AddConfirmButton({ Title = "Confirm Button", Icon = "7733658504" }, function() -- alert-triangle
+    Window:Notify({ Title = "Confirmed!", Desc = "Action confirmed", Duration = 2, Kind = "success" })
+end)
+S6:AddConfirmButton({ Title = "Delete Button",  Icon = "7743873772" }, function() -- trash-2
+    Window:Notify({ Title = "Deleted!", Desc = "Item deleted", Duration = 2, Kind = "error" })
+end)
+
+local S7 = ShowcaseTab:AddSection("Color Pickers")
+
+S7:AddColorPicker({ Title = "Accent Color",     Icon = "7734021595", Default = Color3.fromRGB(130, 160, 255) }, function(c) end)
+S7:AddColorPicker({ Title = "Background Color", Icon = "7734021595", Default = Color3.fromRGB(15, 15, 15)   }, function(c) end)
+S7:AddColorPicker({ Title = "Text Color",       Icon = "7734021595", Default = Color3.fromRGB(230, 230, 230)}, function(c) end)
+
+local S8 = ShowcaseTab:AddSection("Labels & Text")
+
+S8:AddLabel("This is a plain label")
+S8:AddSeparator()
+S8:AddLabel("Another label after separator")
+S8:AddParagraph({ Title = "Short Paragraph",  Content = "A short description paragraph." })
+S8:AddParagraph({ Title = "Long Paragraph",   Content = "This is a longer paragraph that contains more body text and wraps across multiple lines to demonstrate the paragraph component's text wrapping capability." })
+
+local S9 = ShowcaseTab:AddSection("Notifications")
+
+S9:AddButton({ Title = "Info Notify",    Icon = "7733964719" }, function() -- info
+    Window:Notify({ Title = "Info",    Desc = "This is an info notification",    Duration = 3, Kind = "info"    })
+end)
+S9:AddButton({ Title = "Success Notify", Icon = "7733715400" }, function() -- check
+    Window:Notify({ Title = "Success", Desc = "This is a success notification", Duration = 3, Kind = "success" })
+end)
+S9:AddButton({ Title = "Warn Notify",    Icon = "7733658504" }, function() -- alert-triangle
+    Window:Notify({ Title = "Warning", Desc = "This is a warning notification", Duration = 3, Kind = "warn"    })
+end)
+S9:AddButton({ Title = "Error Notify",   Icon = "7743878496" }, function() -- x-circle
+    Window:Notify({ Title = "Error",   Desc = "This is an error notification",  Duration = 3, Kind = "error"   })
+end)
+S9:AddButton({ Title = "Long Notify",    Icon = "7733911828" }, function() -- bell
+    Window:Notify({ Title = "Long Duration", Desc = "This notification lasts 8 seconds", Duration = 8, Kind = "info" })
+end)
+
+-- ============================================
+-- 🚀 START
+-- ============================================
+Window:Notify({
+    Title = "UI Showcase",
+    Desc = "Loaded successfully 🔥",
+    Duration = 4,
+    Kind = "success"
+})
+
+Window:ShowKeybindList({ X = 10, Y = 550 })
