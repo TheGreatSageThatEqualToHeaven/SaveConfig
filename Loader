@@ -442,6 +442,7 @@ function SimpleUI.new(title, subtitle, config)
     sg.Parent          = CoreGui
 
     local win = mkFrame(sg, UDim2.new(0,750,0,500), UDim2.new(0.5,-375,0.5,-250), T.BG)
+    win.ClipsDescendants = true
     corner(win, 14)
     mkStroke(win, T.SEP, 1, 0)
     self._win = win
@@ -2737,6 +2738,8 @@ function SimpleUI.new(title, subtitle, config)
     confirmOverlay.Name = "ConfirmOverlay"
     confirmOverlay.ZIndex = 80
     confirmOverlay.Visible = false
+    confirmOverlay.ClipsDescendants = true
+    corner(confirmOverlay, 14)
 
     local confirmCard = mkFrame(confirmOverlay, UDim2.new(0,280,0,0), UDim2.new(0.5,-140,0.5,0), T.BG2)
     confirmCard.AnchorPoint = Vector2.new(0, 0.5)
