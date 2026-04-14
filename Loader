@@ -2351,8 +2351,7 @@ function SimpleUI.new(title, subtitle, config)
     -- Content area
     local contentWrap = mkFrame(body, UDim2.new(1,-155,1,-30), UDim2.new(0,156,0,0), T.BG)
     corner(contentWrap, 14)
-    local contentTopFill = mkFrame(body, UDim2.new(1,-155,0,14), UDim2.new(0,156,0,0), T.BG)
-    contentTopFill.ZIndex = contentWrap.ZIndex + 1
+    -- No top fill for content area — keep rounded top corner there
     contentWrap.ClipsDescendants = true
     local scroll      = Instance.new("ScrollingFrame")
     scroll.Size              = UDim2.new(1,0,1,0)
@@ -2373,7 +2372,6 @@ function SimpleUI.new(title, subtitle, config)
         tw(sidebar, {BackgroundColor3 = T.BG2})
         tw(sidebarTopFill, {BackgroundColor3 = T.BG2})
         tw(contentWrap, {BackgroundColor3 = T.BG})
-        tw(contentTopFill, {BackgroundColor3 = T.BG})
         tw(overlayGapMask, {BackgroundColor3 = T.BG})
     end)
 
