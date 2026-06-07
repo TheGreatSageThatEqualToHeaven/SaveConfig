@@ -3,7 +3,7 @@
 -- ============================================
 
 -- Load UI Library
-local UI = loadstring(game:HttpGet("https://pastebin.com/raw/ypMXuvuF"))()
+local UI = loadstring(game:HttpGet("https://raw.githubusercontent.com/TheGreatSageThatEqualToHeaven/SaveConfig/refs/heads/main/Loader"))()
 
 -- Load Config System
 local ConfigModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/TheGreatSageThatEqualToHeaven/SaveConfig/refs/heads/main/Cfg"))()
