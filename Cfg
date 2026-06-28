@@ -1,74 +1,31 @@
--- ============================================
--- HeatScript Config (universal executor build)
--- Works on: Synapse X, Script-Ware, Solara, Delta,
--- Wave, Krnl, Fluxus, Codex, AWP, JJSploit, etc.
--- Falls back to in-memory storage if the executor
--- does not expose a filesystem API.
--- ============================================
-
 local HttpService = game:GetService("HttpService")
 
 local configFolder = "HeatScript"
 local configFile   = configFolder .. "/config.json"
 
--- Resolve filesystem globals safely (some executors gate them)
-local _isfolder   = rawget(getfenv(), "isfolder")   or isfolder
-local _makefolder = rawget(getfenv(), "makefolder") or makefolder
-local _isfile     = rawget(getfenv(), "isfile")     or isfile
-local _readfile   = rawget(getfenv(), "readfile")   or readfile
-local _writefile  = rawget(getfenv(), "writefile")  or writefile
-
-local hasFS =
-    type(_isfolder)   == "function" and
-    type(_makefolder) == "function" and
-    type(_isfile)     == "function" and
-    type(_readfile)   == "function" and
-    type(_writefile)  == "function"
-
--- In-memory fallback so the script never errors
-local memoryStore = {}
-
 local function ensureFolder()
-    if not hasFS then return end
-    local ok, exists = pcall(_isfolder, configFolder)
-    if ok and not exists then
-        pcall(_makefolder, configFolder)
-    end
+    if not isfolder(configFolder) then makefolder(configFolder) end
 end
 
 local function saveConfig(cfg)
-    cfg = cfg or {}
-    if not hasFS then
-        memoryStore = cfg
-        return true
-    end
     ensureFolder()
-    local ok, encoded = pcall(function()
-        return HttpService:JSONEncode(cfg)
-    end)
-    if not ok then return false end
-    local wrote = pcall(_writefile, configFile, encoded)
-    return wrote
+    writefile(configFile, HttpService:JSONEncode(cfg))
 end
 
 local function loadConfig()
-    if not hasFS then
-        return memoryStore or {}
-    end
     ensureFolder()
-    local exists = false
-    pcall(function() exists = _isfile(configFile) end)
-    if not exists then return {} end
-    local ok, data = pcall(function()
-        return HttpService:JSONDecode(_readfile(configFile))
-    end)
-    if ok and type(data) == "table" then return data end
+    if isfile(configFile) then
+        local ok, data = pcall(function()
+            return HttpService:JSONDecode(readfile(configFile))
+        end)
+        if ok and data then return data end
+    end
     return {}
 end
 
+-- Return the whole config system as a table
 return {
-    save = saveConfig,
-    load = loadConfig,
-    data = loadConfig(),
-    hasFilesystem = hasFS,
+    save   = saveConfig,
+    load   = loadConfig,
+    data   = loadConfig(), -- pre-loaded config data on require
 }
